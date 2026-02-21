@@ -14,6 +14,7 @@ import type {
   CharacterId,
   RelationEdge,
   RelationKind,
+  DialogueSet,
 } from "./types";
 import { ALL_RUIN_IDS } from "./types";
 import * as lex from "./lexicon";
@@ -317,6 +318,7 @@ function buildCharacter(
     goals,
     mythBio,
     truthBio,
+    dialogue: { greet: [], rumor: [], warning: [], offer: [], farewell: [], repeat: [], truth: [] },
   };
 }
 
@@ -457,7 +459,95 @@ function generateRelations(
   return edges;
 }
 
-// ─── 7. Main generator ───
+// ─── 7. Dialogue Generation ───
+
+function generateDialogueSet(
+  rng: RNG,
+  character: Character,
+  god: DestroyerGod,
+  ruins: Ruin[],
+  factions: Faction[]
+): DialogueSet {
+  // Gather character context
+  const linkedRuinObjs = character.linkedRuins.map(
+    (rid) => ruins.find((r) => r.id === rid)!
+  ).filter(Boolean);
+  const faction = character.factionId
+    ? factions.find((f) => f.id === character.factionId)
+    : null;
+
+  // Helper: fill dialogue slots in a template
+  function fillSlots(template: string): string {
+    const ruinObj = linkedRuinObjs.length > 0
+      ? rng.pick(linkedRuinObjs)
+      : rng.pick(ruins);
+    const anyFaction = faction || rng.pick(factions);
+    const ruinAliasArr = lex.ruinAliases[ruinObj.id] || [`${ruinObj.id}의 봉인`];
+
+    return template
+      .replace("{address}", rng.pick(lex.addressTerms))
+      .replace("{oath}", rng.pick(lex.oathPhrases))
+      .replace("{godTitle}", god.mythTitle)
+      .replace("{domain}", god.domain)
+      .replace("{ruinId}", ruinObj.id)
+      .replace("{ruinMythName}", ruinObj.mythName)
+      .replace("{ruinAlias}", rng.pick(ruinAliasArr))
+      .replace("{factionName}", anyFaction.name)
+      .replace("{ritual}", rng.pick(lex.rituals))
+      .replace("{taboo}", rng.pick(lex.taboos))
+      .replace("{relic}", ruinObj.relic)
+      .replace("{greetVerb}", rng.pick(lex.greetingVerbs))
+      .replace("{rumorOpener}", rng.pick(lex.rumorOpeners))
+      .replace("{warningCurse}", rng.pick(lex.warningCurses))
+      .replace("{tradeHook}", rng.pick(lex.tradeHooks))
+      .replace("{trueFunction}", ruinObj.trueFunction)
+      .replace("{trueNature}", god.trueNature)
+      .replace("{omen}", rng.pick(lex.omens));
+  }
+
+  // Helper: generate N unique lines from a template pool
+  function generateLines(
+    templates: readonly string[],
+    min: number,
+    max: number
+  ): string[] {
+    const count = rng.int(min, max);
+    const lines: string[] = [];
+    const localUsed = new Set<string>();
+    for (let i = 0; i < count; i++) {
+      const tplStr = rng.pickUnique(templates, localUsed);
+      lines.push(fillSlots(tplStr));
+    }
+    return lines;
+  }
+
+  // Ensure connected tokens: at least 1 linked ruin mention in rumor/warning
+  // and god reference in rumor/warning — handled naturally by templates using {ruinId}/{ruinMythName}/{godTitle}
+
+  const greet = generateLines(tpl.greetTemplates, 2, 4);
+  const rumor = generateLines(tpl.rumorTemplates, 2, 4);
+  const warning = generateLines(tpl.warningTemplates, 1, 3);
+  const offer = generateLines(tpl.offerTemplates, 1, 3);
+  const farewell = generateLines(tpl.farewellTemplates, 1, 2);
+  const repeat = generateLines(tpl.repeatTemplates, 1, 3);
+  const truth = generateLines(tpl.truthTemplates, 1, 3);
+
+  return { greet, rumor, warning, offer, farewell, repeat, truth };
+}
+
+function generateAllDialogues(
+  rng: RNG,
+  people: Character[],
+  god: DestroyerGod,
+  ruins: Ruin[],
+  factions: Faction[]
+): void {
+  for (const character of people) {
+    character.dialogue = generateDialogueSet(rng, character, god, ruins, factions);
+  }
+}
+
+// ─── 8. Main generator ───
 
 export function generateMythWorld(seed: number | string): MythWorld {
   const rng = createRNG(seed);
@@ -467,6 +557,7 @@ export function generateMythWorld(seed: number | string): MythWorld {
   const timeline = generateTimeline(rng, god, ruins, factions);
   const people = generatePeople(rng, ruins, factions);
   const relations = generateRelations(rng, people, factions, ruins);
+  generateAllDialogues(rng, people, god, ruins, factions);
 
   return { seed, god, ruins, factions, timeline, people, relations };
 }

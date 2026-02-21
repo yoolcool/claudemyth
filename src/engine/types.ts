@@ -57,6 +57,16 @@ export type RelationKind =
   | "debt"
   | "oracle";
 
+export type DialogueSet = {
+  greet: string[];     // 첫 조우 (2~4줄)
+  rumor: string[];     // 세계관/유적/파벌 소문 (2~4줄)
+  warning: string[];   // 금기/위협/경고 (1~3줄)
+  offer: string[];     // 제안/유혹/거래 (1~3줄)
+  farewell: string[];  // 작별 (1~2줄)
+  repeat: string[];    // 반복 조우 (1~3줄)
+  truth?: string[];    // Truth ON일 때만 표시 (1~3줄)
+};
+
 export interface Character {
   id: CharacterId;
   name: string;
@@ -67,6 +77,7 @@ export interface Character {
   goals: string[];
   mythBio: string;
   truthBio: string;
+  dialogue: DialogueSet;
 }
 
 export interface RelationEdge {

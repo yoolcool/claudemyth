@@ -1,5 +1,5 @@
 import type { MythWorld, CharacterId } from "../engine";
-import { formatCharacter } from "../engine";
+import { formatCharacter, formatCharacterDialogue } from "../engine";
 
 interface PeoplePanelProps {
   world: MythWorld;
@@ -18,7 +18,9 @@ export function PeoplePanel({
 }: PeoplePanelProps) {
   function handleClick(id: CharacterId) {
     onSelectCharacter(id);
-    onSelect(formatCharacter(world, id, truthMode));
+    const charDetail = formatCharacter(world, id, truthMode);
+    const dialogueDetail = formatCharacterDialogue(world, id, truthMode);
+    onSelect(charDetail + "\n\n" + dialogueDetail);
   }
 
   return (

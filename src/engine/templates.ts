@@ -301,6 +301,121 @@ export const relationMythTemplates = [
   "{A}의 상처는 {B}의 저주에 의한 것이라 전해진다.",
 ] as const;
 
+// ─── NPC 대사: 인사 (greet) ───
+
+export const greetTemplates = [
+  "…{address}. {oath} {godTitle}의 이름을 가볍게 부르지 마라.",
+  "{greetVerb}, {address}. 이 땅은 봉인의 땅이다.",
+  "…네가 {address}이라면, {ruinMythName}의 재를 밟고 왔겠지.",
+  "{address}여. {factionName}의 {ritual}이 끝나기 전에 왔군.",
+  "멈춰라, {address}. {oath} 네 이름을 먼저 밝혀라.",
+  "{greetVerb}. 이곳에서 {godTitle}의 이름을 입에 올리지 마라.",
+  "…{address}. 봉인의 길 위에서 만나다니, 우연이 아니다.",
+  "{address}. {factionName}이 너를 보내었느냐, 아니면 네 발이 이끈 것이냐.",
+  "재의 냄새가 나는군, {address}. {ruinAlias}에서 왔느냐.",
+  "{greetVerb}, {address}. {oath} 이 만남에는 의미가 있을 것이다.",
+  "{address}여, {ritual}의 시간이 다가온다. 네가 올 줄 알았다.",
+  "…살아 있는 자가 이곳까지 왔다니. {greetVerb}, {address}.",
+] as const;
+
+// ─── NPC 대사: 소문 (rumor) ───
+
+export const rumorTemplates = [
+  "{rumorOpener}, [{ruinId}] {ruinMythName} 아래에서 {relic}이(가) 울었다고.",
+  "{factionName}의 {ritual}이 끝나면, 봉인이 한 겹 얇아진다.",
+  "{rumorOpener}… {godTitle}의 {domain}이 다시 꿈틀거리고 있다고.",
+  "[{ruinId}] {ruinMythName}에서 새로운 문양이 나타났다. {rumorOpener}.",
+  "{rumorOpener}, {factionName}이 {relic}을(를) 몰래 옮기고 있다는 것을.",
+  "…{ruinAlias}의 벽이 밤마다 운다. 봉인이 약해지고 있는 거다.",
+  "{rumorOpener}, {godTitle}의 꿈이 [{ruinId}]에서 흘러나오고 있다고.",
+  "{factionName}의 사제 하나가 {taboo}을 어기고 살아남았다더군.",
+  "{rumorOpener}… [{ruinId}] 근처에서 {omen}고 한다.",
+  "…{relic}을 가진 자가 나타났다는 소문이 있다. {rumorOpener}.",
+  "{ruinAlias}에서 성가가 들린다. 그것은 {godTitle}의 숨결이라고들 한다.",
+  "{rumorOpener}, 봉인의 못 하나가 느슨해졌다고. [{ruinId}]의 것이라던데.",
+  "{factionName}이 비밀리에 {ritual}을 행하고 있다. 무언가를 준비하는 거다.",
+  "…{godTitle}의 {domain}에 닿은 자가 미쳐서 돌아왔다더군.",
+  "{rumorOpener}, {ruinAlias}의 유물이 저절로 빛났다고.",
+  "{factionName}의 경전에 새로운 구절이 나타났다. 아무도 쓴 적이 없는데.",
+] as const;
+
+// ─── NPC 대사: 경고 (warning) ───
+
+export const warningTemplates = [
+  "[{ruinId}]에 가까이 가지 마라. {taboo}.",
+  "{oath} 경고한다. {godTitle}의 이름을 함부로 부르면 {warningCurse}.",
+  "…{factionName}을 믿지 마라. 그들의 {ritual}은 봉인을 약하게 한다.",
+  "{ruinAlias}에서 돌아온 자는 없다. 네가 처음이 되려 하지 마라.",
+  "봉인이 깨지면 {warningCurse}. 그것은 시작에 불과하다.",
+  "…{godTitle}의 {domain}을 탐하지 마라. {warningCurse}.",
+  "{relic}에 손대지 마라. 마지막으로 만진 자는 {warningCurse}.",
+  "이 길을 더 가면 [{ruinId}] {ruinMythName}이다. 돌아가는 게 현명하다.",
+  "{factionName}의 심문관이 너를 찾고 있다. {warningCurse}.",
+  "봉인의 금기를 어기면 {warningCurse}. 나는 경고했다.",
+  "{oath} 맹세코 말한다, [{ruinId}]의 깊은 곳에는 들어가지 마라.",
+  "…{godTitle}의 꿈을 꾸기 시작했다면, 이미 늦었다. {warningCurse}.",
+] as const;
+
+// ─── NPC 대사: 제안/거래 (offer) ───
+
+export const offerTemplates = [
+  "원한다면 {tradeHook}을(를) 주겠다. 대신 네가 [{ruinId}]에 들어가라.",
+  "{tradeHook}이 필요하지 않느냐? {factionName}은 이것을 줄 수 없을 것이다.",
+  "…거래를 하자. [{ruinId}] {ruinMythName}에서 {relic}을 가져오면, 네가 원하는 것을 주마.",
+  "{tradeHook}… 이것은 [{ruinId}]에서 가져온 것이다. 가치를 알겠느냐?",
+  "나에게는 {tradeHook}이 있다. {oath} 이것은 공짜가 아니다.",
+  "{factionName}이 숨기고 있는 것이 있다. {tradeHook}을 주면 알려주마.",
+  "…{ruinAlias}의 비밀을 알고 싶다면, 먼저 네가 무엇을 줄 수 있는지 말해라.",
+  "{tradeHook}과 교환으로, {godTitle}에 대한 금기의 지식을 나누어 주마.",
+  "나를 [{ruinId}]까지 호위해라. 대가로 {tradeHook}을 주겠다.",
+  "{relic}의 진짜 용도를 알고 싶다면… {tradeHook}을 가져와라.",
+  "…{factionName}의 약점을 원하느냐? {tradeHook}이면 충분하다.",
+  "{tradeHook}… 이것은 봉인의 파편이다. 거래의 가치가 있지 않겠느냐.",
+] as const;
+
+// ─── NPC 대사: 작별 (farewell) ───
+
+export const farewellTemplates = [
+  "…가거라, {address}. {oath} 봉인이 너를 지켜줄지는 모르겠다.",
+  "{address}여, 살아서 다시 만나길. {godTitle}의 그림자가 짧은 날에.",
+  "재의 길 위에서 다시 만나자, {address}. 봉인이 닫히기 전에.",
+  "…가라. [{ruinId}]의 바람이 네 등을 밀 것이다.",
+  "{oath} 다음에 만날 때는 적이 아니길 바란다, {address}.",
+  "{address}… 떠나라. 이 땅에 오래 머물면 봉인이 너를 기억하기 시작한다.",
+  "살아 돌아오면 {ruinAlias}에서 기다리마. 돌아오지 않으면… 그것도 운명이다.",
+  "{godTitle}의 침묵 아래, 네 걸음에 축복을. 가라, {address}.",
+] as const;
+
+// ─── NPC 대사: 반복 조우 (repeat) ───
+
+export const repeatTemplates = [
+  "…또 왔느냐, {address}. 봉인이 너를 다시 이끈 것이냐.",
+  "{address}… 아직 살아 있었군. {godTitle}이 관대하셨나 보다.",
+  "다시 만나다니. {ruinAlias}의 소문이 너를 다시 불렀느냐.",
+  "…{address}. 네 발걸음에서 [{ruinId}]의 재 냄새가 난다.",
+  "돌아왔구나. {factionName}이 너를 놓아주었느냐, 아니면 도망친 것이냐.",
+  "…또 만나다니, {address}. {oath} 이것은 우연이 아닐 것이다.",
+  "{address}여, 네 눈이 변했군. {ruinAlias}에서 무엇을 보았느냐.",
+  "다시 왔느냐… {godTitle}의 꿈이 너를 놓아주지 않는 모양이다.",
+  "…{address}. 지난번보다 그림자가 짙어졌군. 봉인이 너를 먹고 있다.",
+  "살아 돌아온 것을 축하해야 하느냐, 아니면 애도해야 하느냐, {address}.",
+] as const;
+
+// ─── NPC 대사: 진실 (truth) — Truth ON 전용 ───
+
+export const truthTemplates = [
+  "…사실은 {ruinMythName}은(는) {trueFunction}이었어. 우리가 기도하는 대상은 기계다.",
+  "{factionName}의 교리? 전부 거짓이야. 진짜 목적은 {trueFunction}의 통제권이지.",
+  "…{godTitle}이라고? 그건 {trueNature}일 뿐이야. 신은 없어.",
+  "봉인이라 부르는 건… 사실 시설 격리 프로토콜이야. 알면서도 모른 척하는 거지.",
+  "내가 왜 [{ruinId}]에 가는지 알아? {trueFunction}의 데이터가 필요해서야.",
+  "…{relic}? 그건 구시대 장비의 파편이야. 성스러운 건 아무것도 없어.",
+  "{factionName}이 숨기는 건 간단해. 그들은 {trueFunction}에 접근할 수 있다는 거야.",
+  "…솔직히 말하면, 이 모든 신화는 기술 문명의 잔해 위에 쌓은 거짓말이야.",
+  "나도 처음엔 믿었어. 하지만 [{ruinId}]에서 {trueFunction}을(를) 직접 봤지.",
+  "…{godTitle}의 '각성'이라고? 그건 시스템 재부팅이야. 그게 전부야.",
+] as const;
+
 // ─── 종교적 어투 변환 패턴 ───
 
 export const religiousToneReplacements: readonly [string, string][] = [

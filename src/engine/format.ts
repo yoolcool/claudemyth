@@ -332,6 +332,56 @@ export function formatRelations(world: MythWorld, truthMode: boolean): string {
   return lines.join("\n");
 }
 
+// ─── Character Dialogue ───
+
+export function formatCharacterDialogue(
+  world: MythWorld,
+  charId: CharacterId,
+  truthMode: boolean
+): string {
+  const char = world.people.find((p) => p.id === charId);
+  if (!char) return "인물을 찾을 수 없습니다.";
+
+  const d = char.dialogue;
+  const lines: string[] = [];
+
+  lines.push("══════════════════════════════════════");
+  lines.push(`  ◈ ${char.name}의 대사`);
+  lines.push("══════════════════════════════════════");
+
+  lines.push("");
+  lines.push("── [첫 조우] ──");
+  for (const line of d.greet) lines.push(`  "${line}"`);
+
+  lines.push("");
+  lines.push("── [소문] ──");
+  for (const line of d.rumor) lines.push(`  "${line}"`);
+
+  lines.push("");
+  lines.push("── [경고] ──");
+  for (const line of d.warning) lines.push(`  "${line}"`);
+
+  lines.push("");
+  lines.push("── [제안] ──");
+  for (const line of d.offer) lines.push(`  "${line}"`);
+
+  lines.push("");
+  lines.push("── [반복] ──");
+  for (const line of d.repeat) lines.push(`  "${line}"`);
+
+  lines.push("");
+  lines.push("── [작별] ──");
+  for (const line of d.farewell) lines.push(`  "${line}"`);
+
+  if (truthMode && d.truth && d.truth.length > 0) {
+    lines.push("");
+    lines.push("── [진실] ──");
+    for (const line of d.truth) lines.push(`  "${line}"`);
+  }
+
+  return lines.join("\n");
+}
+
 function relationKindLabel(kind: string): string {
   const labels: Record<string, string> = {
     ally: "동맹",

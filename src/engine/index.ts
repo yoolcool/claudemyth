@@ -12,6 +12,7 @@ export type {
   Character,
   RelationEdge,
   RelationKind,
+  DialogueSet,
 } from "./types";
 export { ALL_RUIN_IDS } from "./types";
 
@@ -30,5 +31,6 @@ export {
   formatTimeline,
   formatPeopleList,
   formatCharacter,
+  formatCharacterDialogue,
   formatRelations,
 } from "./format";
