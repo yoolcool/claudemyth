@@ -40,10 +40,45 @@ export interface TimelineEvent {
   mythVersion: string;
 }
 
+export type CharacterId = string;
+
+export type RelationKind =
+  | "ally"
+  | "mentor"
+  | "betrayal"
+  | "rival"
+  | "oath"
+  | "blood"
+  | "trade"
+  | "hunt"
+  | "prophecy";
+
+export interface Character {
+  id: CharacterId;
+  name: string;
+  epithet: string;
+  archetype: string;
+  factionId?: string;
+  linkedRuins: RuinId[];
+  goals: string[];
+  mythBio: string;
+  truthBio: string;
+}
+
+export interface RelationEdge {
+  from: string;
+  to: string;
+  kind: RelationKind;
+  mythLine: string;
+  truthLine?: string;
+}
+
 export interface MythWorld {
   seed: number | string;
   god: DestroyerGod;
   ruins: Ruin[];
   factions: Faction[];
   timeline: TimelineEvent[];
+  people: Character[];
+  relations: RelationEdge[];
 }

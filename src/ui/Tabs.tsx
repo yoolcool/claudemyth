@@ -1,4 +1,4 @@
-export type TabId = "world" | "ruins" | "factions" | "timeline";
+export type TabId = "world" | "ruins" | "factions" | "people" | "relations" | "timeline";
 
 interface TabsProps {
   active: TabId;
@@ -9,6 +9,8 @@ const TAB_LABELS: { id: TabId; label: string }[] = [
   { id: "world", label: "World" },
   { id: "ruins", label: "Ruins" },
   { id: "factions", label: "Factions" },
+  { id: "people", label: "People" },
+  { id: "relations", label: "Relations" },
   { id: "timeline", label: "Timeline" },
 ];
 

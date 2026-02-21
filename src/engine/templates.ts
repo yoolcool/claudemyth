@@ -121,6 +121,32 @@ export const trueNatureMythVersions = [
   "형체 없는 목소리",
 ] as const;
 
+// ─── 인물 소개 템플릿 ───
+
+export const characterIntroTemplates = [
+  "{name}, {epithet}라 불리는 자.",
+  "{name}은(는) {factionName}의 {archetype}이다.",
+  "그는 {ruinList}과(와) 깊이 얽혀 있다.",
+  "그의 목표는 {goal}이며, 이는 금기의 경전에도 기록되어 있다.",
+  "사람들은 그를 두려워하면서도 따르기를 원한다.",
+  "{name}은(는) 재의 사막을 홀로 걸으며 봉인의 진실을 찾고 있다.",
+  "그가 지나간 곳에는 항상 검은 성가가 울려 퍼진다.",
+  "그의 눈에는 유적의 빛이 깃들어 있다고 한다.",
+] as const;
+
+// ─── 관계 템플릿 ───
+
+export const relationMythTemplates = [
+  "{A}은(는) {B}와 피의 맹세로 얽혀 있다.",
+  "{A}은(는) {B}를 배신했다는 소문이 있다.",
+  "{A}은(는) {ruin}의 예언을 함께 해석했다.",
+  "{A}은(는) {B}를 사냥한다.",
+  "{A}은(는) {faction}의 비밀을 알고 있다.",
+  "{A}은(는) {B}에게 봉인의 비밀을 전수했다.",
+  "{A}과(와) {B}는 같은 유적에서 계시를 받았다.",
+  "{A}은(는) {B}의 이름을 금기의 서에 기록했다.",
+] as const;
+
 // ─── 종교적 어투 변환 패턴 ───
 
 export const religiousToneReplacements: readonly [string, string][] = [

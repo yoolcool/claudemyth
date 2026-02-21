@@ -1,9 +1,11 @@
-import type { MythWorld, RuinId } from "../engine";
+import type { MythWorld, RuinId, CharacterId } from "../engine";
 import type { TabId } from "./Tabs";
 import { Tabs } from "./Tabs";
 import { WorldPanel } from "./WorldPanel";
 import { RuinsPanel } from "./RuinsPanel";
 import { FactionsPanel } from "./FactionsPanel";
+import { PeoplePanel } from "./PeoplePanel";
+import { RelationsPanel } from "./RelationsPanel";
 import { TimelinePanel } from "./TimelinePanel";
 
 interface BottomPanelProps {
@@ -16,6 +18,8 @@ interface BottomPanelProps {
   onSelectRuin: (id: RuinId) => void;
   selectedFaction: string | null;
   onSelectFaction: (id: string) => void;
+  selectedCharacter: CharacterId | null;
+  onSelectCharacter: (id: CharacterId) => void;
 }
 
 export function BottomPanel({
@@ -28,6 +32,8 @@ export function BottomPanel({
   onSelectRuin,
   selectedFaction,
   onSelectFaction,
+  selectedCharacter,
+  onSelectCharacter,
 }: BottomPanelProps) {
   return (
     <div className="bottom-panel">
@@ -53,6 +59,16 @@ export function BottomPanel({
             selectedFaction={selectedFaction}
             onSelectFaction={onSelectFaction}
           />
+        ) : activeTab === "people" ? (
+          <PeoplePanel
+            world={world}
+            truthMode={truthMode}
+            onSelect={onSelect}
+            selectedCharacter={selectedCharacter}
+            onSelectCharacter={onSelectCharacter}
+          />
+        ) : activeTab === "relations" ? (
+          <RelationsPanel world={world} truthMode={truthMode} onSelect={onSelect} />
         ) : (
           <TimelinePanel world={world} truthMode={truthMode} onSelect={onSelect} />
         )}

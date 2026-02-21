@@ -2,7 +2,7 @@
  * Formatter — converts MythWorld data into display text.
  */
 
-import type { MythWorld, RuinId } from "./types";
+import type { MythWorld, RuinId, CharacterId } from "./types";
 import * as tpl from "./templates";
 import * as lex from "./lexicon";
 import { createRNG } from "./rng";
@@ -200,4 +200,149 @@ export function formatTimeline(world: MythWorld, truthMode: boolean): string {
   }
 
   return lines.join("\n");
+}
+
+// ─── People List ───
+
+export function formatPeopleList(world: MythWorld): string {
+  const lines: string[] = [];
+  lines.push("══════════════════════════════════════");
+  lines.push("  ◈ 등장인물");
+  lines.push("══════════════════════════════════════");
+  lines.push("");
+
+  for (const char of world.people) {
+    const faction = char.factionId
+      ? world.factions.find((f) => f.id === char.factionId)
+      : null;
+    const factionLabel = faction ? faction.name : "무소속";
+    lines.push(`▸ ${char.name} — ${char.epithet} (${factionLabel})`);
+  }
+
+  return lines.join("\n");
+}
+
+// ─── Character Detail ───
+
+export function formatCharacter(
+  world: MythWorld,
+  charId: CharacterId,
+  truthMode: boolean
+): string {
+  const char = world.people.find((p) => p.id === charId);
+  if (!char) return "인물을 찾을 수 없습니다.";
+
+  const faction = char.factionId
+    ? world.factions.find((f) => f.id === char.factionId)
+    : null;
+
+  const lines: string[] = [];
+  lines.push("──────────────────────────────────────");
+  lines.push(`  ◈ ${char.name}, ${char.epithet}`);
+  lines.push("──────────────────────────────────────");
+  lines.push("");
+
+  lines.push(`원형: ${char.archetype}`);
+  lines.push(`소속: ${faction ? faction.name : "무소속"}`);
+  lines.push("");
+
+  // Linked ruins
+  const ruinNames = char.linkedRuins.map((rid) => {
+    const r = world.ruins.find((ruin) => ruin.id === rid);
+    return r ? `[${r.id}] ${r.mythName}` : rid;
+  });
+  lines.push(`연관 유적: ${ruinNames.join(", ")}`);
+  lines.push(`목표: ${char.goals.join(", ")}`);
+  lines.push("");
+
+  lines.push("── 신화 ──");
+  lines.push(char.mythBio);
+
+  // Relations involving this character
+  const rels = world.relations.filter(
+    (r) => r.from === char.id || r.to === char.id
+  );
+  if (rels.length > 0) {
+    lines.push("");
+    lines.push("── 관계 ──");
+    for (const rel of rels) {
+      const kindLabel = relationKindLabel(rel.kind);
+      const otherId = rel.from === char.id ? rel.to : rel.from;
+      const other = world.people.find((p) => p.id === otherId);
+      const otherFaction = world.factions.find((f) => f.id === otherId);
+      const otherRuin = world.ruins.find((r) => r.id === otherId);
+      const otherName = other
+        ? other.name
+        : otherFaction
+          ? otherFaction.name
+          : otherRuin
+            ? `[${otherRuin.id}] ${otherRuin.mythName}`
+            : otherId;
+
+      lines.push(`  ${char.name} →(${kindLabel})→ ${otherName}`);
+      lines.push(`    ${rel.mythLine}`);
+      if (truthMode && rel.truthLine) {
+        lines.push(`    [진실] ${rel.truthLine}`);
+      }
+    }
+  }
+
+  if (truthMode) {
+    lines.push("");
+    lines.push("── [진실 모드] ──");
+    lines.push(char.truthBio);
+  }
+
+  return lines.join("\n");
+}
+
+// ─── Relations Overview ───
+
+export function formatRelations(world: MythWorld, truthMode: boolean): string {
+  const lines: string[] = [];
+  lines.push("══════════════════════════════════════");
+  lines.push("  ◈ 관계도");
+  lines.push("══════════════════════════════════════");
+  lines.push("");
+
+  for (const rel of world.relations) {
+    const fromChar = world.people.find((p) => p.id === rel.from);
+    const toChar = world.people.find((p) => p.id === rel.to);
+    const toFaction = world.factions.find((f) => f.id === rel.to);
+    const toRuin = world.ruins.find((r) => r.id === rel.to);
+
+    const fromName = fromChar ? fromChar.name : rel.from;
+    const toName = toChar
+      ? toChar.name
+      : toFaction
+        ? toFaction.name
+        : toRuin
+          ? `[${toRuin.id}] ${toRuin.mythName}`
+          : rel.to;
+
+    const kindLabel = relationKindLabel(rel.kind);
+    lines.push(`${fromName} →(${kindLabel})→ ${toName}`);
+    lines.push(`  ${rel.mythLine}`);
+    if (truthMode && rel.truthLine) {
+      lines.push(`  [진실] ${rel.truthLine}`);
+    }
+    lines.push("");
+  }
+
+  return lines.join("\n");
+}
+
+function relationKindLabel(kind: string): string {
+  const labels: Record<string, string> = {
+    ally: "동맹",
+    mentor: "스승",
+    betrayal: "배신",
+    rival: "적대",
+    oath: "서약",
+    blood: "혈맹",
+    trade: "거래",
+    hunt: "사냥",
+    prophecy: "예언",
+  };
+  return labels[kind] || kind;
 }

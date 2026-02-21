@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import type { MythWorld, RuinId } from "../engine";
+import type { MythWorld, RuinId, CharacterId } from "../engine";
 import { generateMythWorld, formatWorldSummary } from "../engine";
 import type { TabId } from "../ui/Tabs";
 import { TopBar } from "../ui/TopBar";
@@ -15,6 +15,7 @@ export default function App() {
   const [mainContent, setMainContent] = useState("");
   const [selectedRuin, setSelectedRuin] = useState<RuinId | null>(null);
   const [selectedFaction, setSelectedFaction] = useState<string | null>(null);
+  const [selectedCharacter, setSelectedCharacter] = useState<CharacterId | null>(null);
 
   const handleGenerate = useCallback((seed: number) => {
     const w = generateMythWorld(seed);
@@ -23,19 +24,16 @@ export default function App() {
     setActiveTab("world");
     setSelectedRuin(null);
     setSelectedFaction(null);
+    setSelectedCharacter(null);
     setMainContent(formatWorldSummary(w, false));
   }, []);
 
   const handleToggleTruth = useCallback(() => {
     setTruthMode((prev) => {
       const next = !prev;
-      // Re-render current content with new truth mode
-      if (world) {
-        // We'll let the user re-click to refresh; simplest approach
-      }
       return next;
     });
-  }, [world]);
+  }, []);
 
   const handleSelect = useCallback((text: string) => {
     setMainContent(text);
@@ -60,6 +58,8 @@ export default function App() {
         onSelectRuin={setSelectedRuin}
         selectedFaction={selectedFaction}
         onSelectFaction={setSelectedFaction}
+        selectedCharacter={selectedCharacter}
+        onSelectCharacter={setSelectedCharacter}
       />
     </div>
   );
