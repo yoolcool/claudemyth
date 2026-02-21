@@ -29,6 +29,8 @@ export interface RNG {
   weightedPick<T>(items: readonly T[], weights: readonly number[]): T;
   /** Pick N unique elements from array */
   pickN<T>(arr: readonly T[], n: number): T[];
+  /** Pick one element not in usedSet, add it to usedSet. Falls back to pick if exhausted. */
+  pickUnique<T>(arr: readonly T[], usedSet: Set<T>): T;
 }
 
 export function createRNG(seed: number | string): RNG {
@@ -80,5 +82,16 @@ export function createRNG(seed: number | string): RNG {
     return shuffled.slice(0, Math.min(n, arr.length));
   }
 
-  return { next, int, pick, shuffle, chance, weightedPick, pickN };
+  function pickUnique<T>(arr: readonly T[], usedSet: Set<T>): T {
+    const available = arr.filter((x) => !usedSet.has(x));
+    if (available.length === 0) {
+      // All exhausted — fall back to regular pick
+      return pick(arr);
+    }
+    const item = pick(available);
+    usedSet.add(item);
+    return item;
+  }
+
+  return { next, int, pick, shuffle, chance, weightedPick, pickN, pickUnique };
 }

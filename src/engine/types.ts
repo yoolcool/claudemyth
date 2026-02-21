@@ -51,7 +51,11 @@ export type RelationKind =
   | "blood"
   | "trade"
   | "hunt"
-  | "prophecy";
+  | "prophecy"
+  | "secret"
+  | "curse"
+  | "debt"
+  | "oracle";
 
 export interface Character {
   id: CharacterId;

@@ -175,11 +175,12 @@ function generateTimeline(
       .replace("{techSystem}", techSystem)
       .replace("{id}", trueRuinId);
 
-    // mythVersion — compose 2-3 myth sentences
+    // mythVersion — compose 2-3 myth sentences (pickUnique within event)
     const mythSentences: string[] = [];
+    const usedEventTpls = new Set<string>();
     const sentenceCount = rng.int(2, 3);
     for (let s = 0; s < sentenceCount; s++) {
-      const mythTpl = rng.pick(tpl.timelineMythTemplates);
+      const mythTpl = rng.pickUnique(tpl.timelineMythTemplates, usedEventTpls);
       const ruin = rng.pick(ruins);
       const faction = rng.pick(factions);
       const filled = mythTpl
@@ -276,16 +277,18 @@ function buildCharacter(
   const goalCount = rng.int(1, 2);
   const goals = rng.pickN([...lex.characterGoals], goalCount);
 
-  // mythBio: 3~6 sentences from templates
+  // mythBio: 3~6 sentences from templates (using pickUnique to avoid repeats)
   const bioCount = rng.int(3, 6);
   const shuffledTpls = rng.shuffle([...tpl.characterIntroTemplates]);
+  const usedTpls = new Set<string>();
   const bioLines: string[] = [];
   for (let i = 0; i < bioCount && i < shuffledTpls.length; i++) {
+    const template = rng.pickUnique(shuffledTpls, usedTpls);
     const ruinNames = linkedRuins.map((rid) => {
       const r = ruins.find((ruin) => ruin.id === rid);
       return r ? r.mythName : rid;
     });
-    const filled = shuffledTpls[i]
+    const filled = template
       .replace("{name}", name)
       .replace("{epithet}", epithet)
       .replace("{factionName}", factionId ? factionId : "무소속")
@@ -296,9 +299,13 @@ function buildCharacter(
   }
   const mythBio = bioLines.join(" ");
 
-  // truthBio
+  // truthBio — use truthBioTemplates for variety
   const truthSnippet = rng.pick(lex.truthBioSnippets);
-  const truthBio = `${name}의 진실: ${truthSnippet}. 표면적 목표(${goals.join(", ")})와 달리 실제 행동은 이에 의해 좌우된다.`;
+  const truthTemplate = rng.pick(tpl.truthBioTemplates);
+  const truthBio = truthTemplate
+    .replace("{name}", name)
+    .replace("{snippet}", truthSnippet)
+    .replace("{goals}", goals.join(", "));
 
   return {
     id,
@@ -325,6 +332,10 @@ const RELATION_KINDS: readonly RelationKind[] = [
   "trade",
   "hunt",
   "prophecy",
+  "secret",
+  "curse",
+  "debt",
+  "oracle",
 ];
 
 function generateRelations(
@@ -358,7 +369,8 @@ function generateRelations(
     return rng.pick(RELATION_KINDS);
   }
 
-  // Generate edges between people
+  // Generate edges between people (use pickUnique for templates to reduce repetition)
+  const usedMythTpls = new Set<string>();
   for (let i = 0; i < edgeCount && i < 50; i++) {
     const charA = rng.pick(people);
     const charB = rng.pick(people.filter((p) => p.id !== charA.id));
@@ -370,8 +382,8 @@ function generateRelations(
 
     const kind = pickKind(charA, charB);
 
-    // mythLine from template
-    const mythTpl = rng.pick(tpl.relationMythTemplates);
+    // mythLine from template (pickUnique to avoid repeating same template)
+    const mythTpl = rng.pickUnique(tpl.relationMythTemplates, usedMythTpls);
     const ruinForRelation = rng.pick(ruins);
     const factionForRelation = rng.pick(factions);
     const mythLine = mythTpl
@@ -396,6 +408,20 @@ function generateRelations(
   const hasBetrayal = edges.some((e) => e.kind === "betrayal");
   if (!hasBetrayal && edges.length > 0) {
     edges[rng.int(0, edges.length - 1)].kind = "betrayal";
+  }
+
+  // Guarantee at least 1 secret or curse
+  const hasSecretOrCurse = edges.some(
+    (e) => e.kind === "secret" || e.kind === "curse"
+  );
+  if (!hasSecretOrCurse && edges.length > 1) {
+    // Pick a different edge than the betrayal one
+    const betrayalIdx = edges.findIndex((e) => e.kind === "betrayal");
+    let targetIdx = rng.int(0, edges.length - 1);
+    if (targetIdx === betrayalIdx && edges.length > 1) {
+      targetIdx = (targetIdx + 1) % edges.length;
+    }
+    edges[targetIdx].kind = rng.chance(0.5) ? "secret" : "curse";
   }
 
   // Guarantee minimum 10 edges — add person↔faction / person↔ruin if needed

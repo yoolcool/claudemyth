@@ -343,6 +343,10 @@ function relationKindLabel(kind: string): string {
     trade: "거래",
     hunt: "사냥",
     prophecy: "예언",
+    secret: "비밀",
+    curse: "저주",
+    debt: "빚",
+    oracle: "계시",
   };
   return labels[kind] || kind;
 }
